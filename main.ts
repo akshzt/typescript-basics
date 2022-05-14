@@ -56,9 +56,9 @@ randomValue = true;
 randomValue = 'John';
 
 // ts doesn't throw any errors 
-console.log(randomValue.name);
-randomValue();
-randomValue.toUpperCase();
+// console.log(randomValue.name);
+// randomValue();
+// randomValue.toUpperCase();
 
 // unknown type can't call methods / access properties
 
@@ -70,3 +70,108 @@ randomValue2 = 'John';
 // console.log(randomValue2.name);
 // randomValue2();
 // randomValue2.toUpperCase();
+
+// to call methods access properties use type assertion
+
+(randomValue2 as string).toUpperCase(); // works 
+
+function hasName(obj: any): obj is { name: string } {
+    return !!obj &&
+           typeof obj === "object" &&
+           "name" in obj
+};
+
+if ( hasName(randomValue2) ) {
+    console.log(randomValue2.name)
+} else {
+    console.log("randomValue2 doesn't have name property")
+}
+
+let a;
+a = 10;
+a = true;
+
+let b = 20;
+// b = true; error as it was initialized with number
+// type inference when variable is initalized at declaration
+
+// union of types, intellisense for methods and properties
+// specific to the type of current data type, union > any
+let multiType: number | boolean = 2;
+multiType = true;
+
+//functions
+// '?' for optional parameters
+// optional parameters to be at last
+function add(num1: number, num2: number = 10, num3?: number): number {
+    if( num3 )
+        return num1 + num2 + num3;
+    else
+        return num1 + num2;
+}
+add(1,2,3);
+add(1, 2);
+add(5);
+
+function fullName(person: {firstName: string, lastName: string}) {
+    console.log(`${person.firstName} ${person.lastName}`);
+};
+
+let p = {
+    firstName: 'Bruce',
+    lastName: 'Wayne',
+};
+
+fullName(p);
+
+// interface
+
+interface Person {
+    firstName: string;
+    lastName?: string;
+};
+
+function fullName2(person: Person) {
+    console.log(`${person.firstName} ${person.lastName}`);
+};
+let p2 = {
+    firstName: 'John'
+}
+fullName2(p);
+fullName2(p2); // works as lastName is optional in Person interface
+
+// classes
+
+class Employee {
+    employeeName: string;
+    private employeeSSN: string;
+
+    constructor(name: string) {
+        this.employeeName = name;
+    }
+
+    greet() {
+        console.log(`Good Morning ${this.employeeName}`);
+    }
+};
+
+let emp1 = new Employee('John');
+console.log(emp1.employeeName);
+emp1.greet();
+// console.log(emp1.employeeSSN); private can't access
+
+class Manager extends Employee {
+    
+    constructor(managerName: string) {
+        super(managerName);
+    }
+
+    delegateWork() {
+        console.log(`Manager delegating tasks`);
+    }
+};
+
+let m1 = new Manager('Bruce');
+m1.delegateWork();
+console.log(m1.employeeName);
+m1.greet();
